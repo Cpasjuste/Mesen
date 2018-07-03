@@ -17,9 +17,9 @@ private:
 	unique_ptr<std::thread> _renderThread;
 	IRenderingDevice* _renderer = nullptr;
 	atomic<bool> _stopFlag;
-
+#ifndef LIBRETRO
 	shared_ptr<AviRecorder> _aviRecorder;
-
+#endif
 	void RenderThread();
 
 public:

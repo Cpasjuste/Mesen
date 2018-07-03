@@ -735,7 +735,11 @@ public:
 
 	static bool IsPaused()
 	{
+#ifdef LIBRETRO
+		return (CheckFlag(EmulationFlags::Paused) || (CheckFlag(EmulationFlags::InBackground) && CheckFlag(EmulationFlags::PauseWhenInBackground))) && !CheckFlag(EmulationFlags::DebuggerWindowEnabled);
+#else
 		return (CheckFlag(EmulationFlags::Paused) || (CheckFlag(EmulationFlags::InBackground) && CheckFlag(EmulationFlags::PauseWhenInBackground) && !GameClient::Connected())) && !CheckFlag(EmulationFlags::DebuggerWindowEnabled);
+#endif
 	}
 
 	static bool InputEnabled()

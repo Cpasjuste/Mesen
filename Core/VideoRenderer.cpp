@@ -71,11 +71,12 @@ void VideoRenderer::RenderThread()
 
 void VideoRenderer::UpdateFrame(void *frameBuffer, uint32_t width, uint32_t height)
 {
+#ifndef LIBRETRO
 	shared_ptr<AviRecorder> aviRecorder = _aviRecorder;
 	if(aviRecorder) {
 		aviRecorder->AddFrame(frameBuffer, width, height);
 	}
-
+#endif
 	if(_renderer) {		
 		_renderer->UpdateFrame(frameBuffer, width, height);
 		_waitForRender.Signal();
@@ -98,28 +99,38 @@ void VideoRenderer::UnregisterRenderingDevice(IRenderingDevice *renderer)
 
 void VideoRenderer::StartRecording(string filename, VideoCodec codec, uint32_t compressionLevel)
 {
+#ifndef LIBRETRO
 	shared_ptr<AviRecorder> recorder(new AviRecorder());
 
 	FrameInfo frameInfo = VideoDecoder::GetInstance()->GetFrameInfo();
 	if(recorder->StartRecording(filename, codec, frameInfo.Width, frameInfo.Height, frameInfo.BitsPerPixel, EmulationSettings::GetSampleRate(), compressionLevel)) {
 		_aviRecorder = recorder;
 	}
+#endif
 }
 
 void VideoRenderer::AddRecordingSound(int16_t* soundBuffer, uint32_t sampleCount, uint32_t sampleRate)
 {
+#ifndef LIBRETRO
 	shared_ptr<AviRecorder> aviRecorder = _aviRecorder;
 	if(aviRecorder) {
 		aviRecorder->AddSound(soundBuffer, sampleCount, sampleRate);
 	}
+#endif
 }
 
 void VideoRenderer::StopRecording()
 {
+#ifndef LIBRETRO
 	_aviRecorder.reset();
+#endif
 }
 
 bool VideoRenderer::IsRecording()
 {
+#ifndef LIBRETRO
 	return _aviRecorder != nullptr && _aviRecorder->IsRecording();
+#else
+	return false;
+#endif
 }

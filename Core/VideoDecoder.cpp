@@ -82,9 +82,11 @@ void VideoDecoder::UpdateVideoFilter()
 		switch(_videoFilterType) {
 			case VideoFilterType::None: break;
 			case VideoFilterType::NTSC: _videoFilter.reset(new NtscFilter()); break;
+#ifndef LIBRETRO
 			case VideoFilterType::BisqwitNtsc: _videoFilter.reset(new BisqwitNtscFilter(1)); break;
 			case VideoFilterType::BisqwitNtscHalfRes: _videoFilter.reset(new BisqwitNtscFilter(2)); break;
 			case VideoFilterType::BisqwitNtscQuarterRes: _videoFilter.reset(new BisqwitNtscFilter(4)); break;
+#endif
 			case VideoFilterType::Raw: _videoFilter.reset(new RawVideoFilter()); break;
 			default: _scaleFilter = ScaleFilter::GetScaleFilter(_videoFilterType); break;
 		}

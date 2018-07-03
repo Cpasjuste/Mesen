@@ -434,8 +434,10 @@ void Console::Run()
 	double lastFrameMax = 0;
 
 	uint32_t lastFrameNumber = -1;
-	
+
+#ifndef LIBRETRO
 	_autoSaveManager.reset(new AutoSaveManager());
+#endif
 
 	_runLock.Acquire();
 	_stopLock.Acquire();
@@ -565,7 +567,9 @@ void Console::Run()
 	PlatformUtilities::EnableScreensaver();
 	PlatformUtilities::RestoreTimerResolution();
 
+#ifndef LIBRETRO
 	_autoSaveManager.reset();
+#endif
 
 	VideoDecoder::GetInstance()->StopThread();
 

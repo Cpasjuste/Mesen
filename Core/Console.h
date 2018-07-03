@@ -45,9 +45,9 @@ class Console
 		shared_ptr<MemoryManager> _memoryManager;
 
 		shared_ptr<SystemActionManager> _systemActionManager;
-
+#ifndef LIBRETRO
 		unique_ptr<AutoSaveManager> _autoSaveManager;
-
+#endif
 		shared_ptr<HdPackBuilder> _hdPackBuilder;
 		unique_ptr<HdPackData> _hdData;
 		unique_ptr<HdAudioDevice> _hdAudioDevice;
