@@ -183,7 +183,13 @@ bool Debugger::LoadCdlFile(string cdlFilepath)
 {
 	if(_codeDataLogger->LoadCdlFile(cdlFilepath)) {
 		//Can't use DebugBreakHelper due to the fact this is called in the constructor
+#ifdef __SWITCH__
+		int tid = 0;
+		svcGetThreadId((u64 *) &tid, CUR_THREAD_HANDLE);
+		bool isEmulationThread = Console::GetEmulationThreadId() == tid;
+#else
 		bool isEmulationThread = Console::GetEmulationThreadId() == std::this_thread::get_id();
+#endif
 		if(!isEmulationThread) {
 			Console::Pause();
 		}
@@ -732,7 +738,11 @@ bool Debugger::SleepUntilResume(BreakSource source)
 		_executionStopped = true;
 		_pausedForDebugHelper = _breakRequested;
 		while(((stepCount == 0 || _breakRequested) && !_stopFlag && _suspendCount == 0) || _preventResume > 0) {
+#ifdef __SWITCH__
+		    svcSleepThread(10 * 1000000);
+#else
 			std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(10));
+#endif
 			stepCount = _stepCount.load();
 		}
 		_pausedForDebugHelper = false;

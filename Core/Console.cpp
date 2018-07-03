@@ -40,6 +40,12 @@
 #include "BatteryManager.h"
 #include "DebugHud.h"
 
+#ifdef __SWITCH__
+extern "C" {
+#include <switch/kernel/svc.h>
+}
+#endif
+
 shared_ptr<Console> Console::Instance(new Console());
 
 Console::Console()
@@ -409,7 +415,11 @@ void Console::RunSingleFrame()
 {
 	//Used by Libretro
 	uint32_t lastFrameNumber = PPU::GetFrameCount();
+#ifdef __SWITCH__
+    svcGetThreadId((u64 *) &_emulationThreadId, CUR_THREAD_HANDLE);
+#else
 	_emulationThreadId = std::this_thread::get_id();
+#endif
 	UpdateNesModel(true);
 
 	while(PPU::GetFrameCount() == lastFrameNumber) {
@@ -442,7 +452,11 @@ void Console::Run()
 	_runLock.Acquire();
 	_stopLock.Acquire();
 
+#ifdef __SWITCH__
+	svcGetThreadId((u64 *) &_emulationThreadId, CUR_THREAD_HANDLE);
+#else
 	_emulationThreadId = std::this_thread::get_id();
+#endif
 
 	targetTime = GetFrameDelay();
 
@@ -499,7 +513,11 @@ void Console::Run()
 					PlatformUtilities::RestoreTimerResolution();
 					while(paused && !_stop) {
 						//Sleep until emulation is resumed
+#ifdef __SWITCH__
+						svcSleepThread(30 * 1000000);
+#else
 						std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(30));
+#endif
 						paused = EmulationSettings::IsPaused();
 					}
 
@@ -598,7 +616,11 @@ void Console::Run()
 	_stopLock.Release();
 	_runLock.Release();
 
+#ifdef __SWITCH__
+	svcGetThreadId((u64 *) &_emulationThreadId, CUR_THREAD_HANDLE);
+#else
 	_emulationThreadId = std::thread::id();
+#endif
 
 	MessageManager::SendNotification(ConsoleNotificationType::GameStopped);
 	MessageManager::SendNotification(ConsoleNotificationType::EmulationStopped);
@@ -740,10 +762,17 @@ void Console::StopDebugger()
 	_debugger.reset();
 }
 
+#ifdef __SWITCH__
+int Console::GetEmulationThreadId()
+{
+    return Instance->_emulationThreadId;
+}
+#else
 std::thread::id Console::GetEmulationThreadId()
 {
 	return Instance->_emulationThreadId;
 }
+#endif
 
 uint32_t Console::GetLagCounter()
 {

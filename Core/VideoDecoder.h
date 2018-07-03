@@ -1,7 +1,9 @@
 #pragma once
 #include "stdafx.h"
 #include <thread>
+#ifndef __SWITCH__
 using std::thread;
+#endif
 
 #include "../Utilities/SimpleLock.h"
 #include "../Utilities/AutoResetEvent.h"
@@ -32,7 +34,9 @@ private:
 	bool _hdFilterEnabled = false;
 	uint32_t _frameNumber = 0;
 
+#ifndef __SWITCH__
 	unique_ptr<thread> _decodeThread;
+#endif
 	unique_ptr<VideoHud> _hud;
 
 	AutoResetEvent _waitForFrame;

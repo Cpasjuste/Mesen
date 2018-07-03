@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "IRenderingDevice.h"
 #include "VideoRenderer.h"
+#ifndef LIBRETRO
 #include "AviRecorder.h"
+#endif
 #include "VideoDecoder.h"
 
 unique_ptr<VideoRenderer> VideoRenderer::Instance;

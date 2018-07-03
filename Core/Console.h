@@ -64,8 +64,11 @@ class Console
 		bool _disableOcNextFrame = false;
 
 		bool _initialized = false;
+#ifdef __SWITCH__
+		int _emulationThreadId;
+#else
 		std::thread::id _emulationThreadId;
-
+#endif
 		void LoadHdPack(VirtualFile &romFile, VirtualFile &patchFile);
 
 		bool Initialize(VirtualFile &romFile, VirtualFile &patchFile);
@@ -102,8 +105,12 @@ class Console
 		void StartRecordingTapeFile(string filepath);
 		void StopRecordingTapeFile();
 		bool IsRecordingTapeFile();
-		
+
+#ifdef __SWITCH__
+		static int GetEmulationThreadId();
+#else
 		static std::thread::id GetEmulationThreadId();
+#endif
 
 		static void Reset(bool softReset = true);
 		void PowerCycle();

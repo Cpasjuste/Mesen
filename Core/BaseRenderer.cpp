@@ -109,8 +109,13 @@ void BaseRenderer::ShowFpsCounter(int lineNumber)
 		if(_lastFrameCount > frameCount) {
 			_currentFPS = 0;
 		} else {
+#ifdef __SWITCH__
+			_currentFPS = (uint32_t)((double)(frameCount - _lastFrameCount) / (_fpsTimer.GetElapsedMS() / 1000));
+			_currentRenderedFPS = (uint32_t)((double)(_renderedFrameCount - _lastRenderedFrameCount) / (_fpsTimer.GetElapsedMS() / 1000));
+#else
 			_currentFPS = (int)(std::round((double)(frameCount - _lastFrameCount) / (_fpsTimer.GetElapsedMS() / 1000)));
 			_currentRenderedFPS = (int)(std::round((double)(_renderedFrameCount - _lastRenderedFrameCount) / (_fpsTimer.GetElapsedMS() / 1000)));
+#endif
 		}
 		_lastFrameCount = frameCount;
 		_lastRenderedFrameCount = _renderedFrameCount;

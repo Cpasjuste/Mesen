@@ -14,7 +14,9 @@ private:
 	static unique_ptr<VideoRenderer> Instance;
 
 	AutoResetEvent _waitForRender;
+#ifndef __SWITCH__
 	unique_ptr<std::thread> _renderThread;
+#endif
 	IRenderingDevice* _renderer = nullptr;
 	atomic<bool> _stopFlag;
 #ifndef LIBRETRO

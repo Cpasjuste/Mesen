@@ -16,9 +16,13 @@ public:
 class SimpleLock
 {
 private:
+#ifdef __SWITCH__
+	int _holderThreadID;
+#else
 	thread_local static std::thread::id _threadID;
 
 	std::thread::id _holderThreadID;
+#endif
 	uint32_t _lockCount;
 	atomic_flag _lock;
 
@@ -32,5 +36,8 @@ public:
 	bool IsFree();
 	void WaitForRelease();
 	void Release();
-};
+#ifdef __SWITCH__
+	static void setMainThreadId(int tid);
+#endif
 
+};

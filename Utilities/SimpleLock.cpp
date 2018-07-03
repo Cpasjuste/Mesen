@@ -2,13 +2,26 @@
 #include <assert.h>
 #include "SimpleLock.h"
 
+#ifdef __SWITCH__
+#include <switch.h>
+static int _threadID;
+void SimpleLock::setMainThreadId(int tid) {
+	_threadID = tid;
+}
+#else
 thread_local std::thread::id SimpleLock::_threadID = std::this_thread::get_id();
+#endif
 
 SimpleLock::SimpleLock()
 {
 	_lock.clear();
 	_lockCount = 0;
+
+#ifdef __SWITCH__
+	svcGetThreadId((u64 *) &_holderThreadID, CUR_THREAD_HANDLE);
+#else
 	_holderThreadID = std::thread::id();
+#endif
 }
 
 SimpleLock::~SimpleLock()
@@ -49,7 +62,11 @@ void SimpleLock::Release()
 	if(_lockCount > 0 && _holderThreadID == _threadID) {
 		_lockCount--;
 		if(_lockCount == 0) {
+#ifdef __SWITCH__
+			svcGetThreadId((u64 *) &_holderThreadID, CUR_THREAD_HANDLE);
+#else
 			_holderThreadID = std::thread::id();
+#endif
 			_lock.clear();
 		}
 	} else {

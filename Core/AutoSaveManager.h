@@ -8,7 +8,9 @@ class AutoSaveManager
 {
 private:
 	const uint32_t _autoSaveSlot = 11;
+#ifndef __SWITCH__
 	std::thread _autoSaveThread;
+#endif
 
 	atomic<bool> _stopThread;
 	AutoResetEvent _signal;

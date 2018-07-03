@@ -4,7 +4,9 @@
 #include "EmulationSettings.h"
 #include "DefaultVideoFilter.h"
 #include "RawVideoFilter.h"
+#ifndef LIBRETRO
 #include "BisqwitNtscFilter.h"
+#endif
 #include "NtscFilter.h"
 #include "HdVideoFilter.h"
 #include "ScaleFilter.h"
@@ -240,7 +242,11 @@ void VideoDecoder::StopThread()
 
 bool VideoDecoder::IsRunning()
 {
+#ifdef LIBRETRO
+	return true;
+#else
 	return _decodeThread != nullptr;
+#endif
 }
 
 void VideoDecoder::TakeScreenshot()

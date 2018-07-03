@@ -3,7 +3,9 @@
 #include <algorithm>
 #include "stdafx.h"
 #include "MessageManager.h"
+#ifndef __SWITCH__
 #include "GameClient.h"
+#endif
 #include "KeyManager.h"
 #include "../Utilities/SimpleLock.h"
 
